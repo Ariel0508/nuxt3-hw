@@ -4,7 +4,6 @@ const userLoginObject = ref({
   email: "",
   password: "",
 });
-//test
 const loginAccount = async (requsetBody) => {
   try {
     const { token } = await $fetch("/user/login", {
@@ -27,7 +26,7 @@ const loginAccount = async (requsetBody) => {
       showConfirmButton: false,
       timer: 1500,
     });
-
+    navigateTo("/orders");
   } catch (error) {
     const { message } = error.response._data;
     $swal.fire({
