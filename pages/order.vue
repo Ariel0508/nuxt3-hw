@@ -1,7 +1,7 @@
 <script setup>
 // 1. 從 useBookingStore 取出資料 bookingResult
-
-const bookingResult = ref({});
+const roomStore = useBookingStore();
+const { bookingResult } = storeToRefs(roomStore);
 </script>
 
 <template>
@@ -77,6 +77,6 @@ const bookingResult = ref({});
     <template v-else>
       <h1>目前沒有預訂資訊</h1>
     </template>
-    <NuxtLink to="/"  class="btn btn-primary" >回上一頁</NuxtLink>
+    <NuxtLink to="/" class="btn btn-primary">回上一頁</NuxtLink>
   </div>
 </template>
