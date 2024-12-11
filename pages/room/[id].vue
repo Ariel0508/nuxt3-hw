@@ -4,12 +4,20 @@ const route = useRoute();
 
 const { id } = route.params;
 
+const bookingStore = useBookingStore();
+const { setBookingInfo } = bookingStore;
+const { bookingInfo } = storeToRefs(bookingStore);
+
 // 將房型資料 data 改成使用 Pinia 管理
-const { data, error } = await useAsyncData(`room-data`, async () => {
+const { error } = await useAsyncData(`room-data`, async () => {
   const response = await $fetch(`/rooms/${id}`, {
     baseURL: "https://nuxr3.zeabur.app/api/v1",
   });
-  return response.result;
+
+  const { result } = response;
+  setBookingInfo(result);
+
+  return response;
 });
 
 if (error.value) {
@@ -33,21 +41,21 @@ const isProvide = function (isProvideBoolean = false) {
         <!-- 以 Pinia 的資料渲染 HTML  -->
         <div class="room-page">
           <div class="room-header">
-            <h1 class="room-name">{{ data.name }}</h1>
+            <h1 class="room-name">{{ bookingInfo.name }}</h1>
             <p class="room-description">
-              {{ data.description }}
+              {{ bookingInfo.description }}
             </p>
           </div>
 
           <div class="room-gallery">
             <img
-              :src="data.imageUrl"
-              :alt="data.name"
+              :src="bookingInfo.imageUrl"
+              :alt="bookingInfo.name"
               class="room-main-image"
             />
             <ul class="room-image-list">
-              <li v-for="(imageUrl, index) in data.imageUrlList">
-                <img :src="imageUrl" :alt="`${data.name}圖片${index + 1}`" />
+              <li v-for="(imageUrl, index) in bookingInfo.imageUrlList">
+                <img :src="imageUrl" :alt="`${bookingInfo.name}圖片${index + 1}`" />
               </li>
             </ul>
             <NuxtLink class="btn btn-lg btn-warning" to="/booking"
@@ -58,16 +66,16 @@ const isProvide = function (isProvideBoolean = false) {
           <div class="room-info">
             <div class="info-block">
               <h2>房間資訊</h2>
-              <p>面積: {{ data.areaInfo }}</p>
-              <p>床型: {{ data.bedInfo }}</p>
-              <p>最多容納人數: {{ data.maxPeople }}</p>
-              <p>價格: {{ data.price }}</p>
+              <p>面積: {{ bookingInfo.areaInfo }}</p>
+              <p>床型: {{ bookingInfo.bedInfo }}</p>
+              <p>最多容納人數: {{ bookingInfo.maxPeople }}</p>
+              <p>價格: {{ bookingInfo.price }}</p>
             </div>
 
             <div class="info-block">
               <h2>房間配置</h2>
               <ul>
-                <li v-for="layout in data.layoutInfo" :key="layout.title">
+                <li v-for="layout in bookingInfo.layoutInfo" :key="layout.title">
                   {{ layout.title }}: {{ isProvide(layout.isProvide) }}
                 </li>
               </ul>
@@ -76,7 +84,7 @@ const isProvide = function (isProvideBoolean = false) {
             <div class="info-block">
               <h2>房內設施</h2>
               <ul>
-                <li v-for="facility in data.facilityInfo" :key="facility.title">
+                <li v-for="facility in bookingInfo.facilityInfo" :key="facility.title">
                   {{ facility.title }}: {{ isProvide(facility.isProvide) }}
                 </li>
               </ul>
@@ -85,7 +93,7 @@ const isProvide = function (isProvideBoolean = false) {
             <div class="info-block">
               <h2>客房備品</h2>
               <ul>
-                <li v-for="amenity in data.amenityInfo" :key="amenity.title">
+                <li v-for="amenity in bookingInfo.amenityInfo" :key="amenity.title">
                   {{ amenity.title }}: {{ isProvide(amenity.isProvide) }}
                 </li>
               </ul>
